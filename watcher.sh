@@ -13,7 +13,7 @@
 
 
 
-VER="0.4"
+VER="0.5"
 
 OUTDIR="/home/madis/Desktop/Encode"
 INPUT_CONFIG="input_vod_config"
@@ -56,7 +56,13 @@ while true; do
 			#shaka-streamer -i $NEW_INPUT_CONFIG -p $NEW_PIPELINE_CONFIG  -c s3://my_s3_bucket/folder/
 			DIRNAME=$(echo "$NAME" | cut -f 1 -d '.')
 			mkdir "$OUTDIR/$DIRNAME"
-			shaka-streamer -i "$NEW_INPUT_CONFIG" -p "$NEW_PIPELINE_CONFIG" -o "$OUTDIR/$DIRNAME"
+			#shaka-streamer -i "$NEW_INPUT_CONFIG" -p "$NEW_PIPELINE_CONFIG" -o "$OUTDIR/$DIRNAME"
+			shaka-streamer -i "$NEW_INPUT_CONFIG" -p "$NEW_PIPELINE_CONFIG" -c s3://https://edithouse-streaming.s3.eu-west-2.amazonaws.com/edithouse-streaming
+			if [ $? -eq "0" ]; then
+				echo "[removing the original video file]"
+				rm "$NAME"
+        		fi
+
 		fi
 
 	done
