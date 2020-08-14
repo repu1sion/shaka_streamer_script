@@ -13,7 +13,7 @@
 
 
 
-VER="0.1"
+VER="0.2"
 
 INPUT_CONFIG="input_vod_config"
 PIPELINE_CONFIG="pipeline_vod_config"
@@ -37,19 +37,23 @@ while true; do
 			done < list.txt
         	fi
 
-		if [ ! -z $NAME ]; then
+		if [ ! -z "$NAME" ]; then
 			echo "[new file name is: $NAME]"
-			NEW_INPUT_CONFIG=${INPUT_CONFIG}_$NAME.yaml
-			NEW_PIPELINE_CONFIG=${PIPELINE_CONFIG}_$NAME.yaml
+			NEW_INPUT_CONFIG=${INPUT_CONFIG}_${NAME}.yaml
+			NEW_PIPELINE_CONFIG=${PIPELINE_CONFIG}_${NAME}.yaml
 
-			cp $INPUT_CONFIG.yaml $NEW_INPUT_CONFIG
-			cp $PIPELINE_CONFIG.yaml $NEW_PIPELINE_CONFIG
+			echo "ic: $NEW_INPUT_CONFIG"
+			echo "pc: $NEW_PIPELINE_CONFIG"
+
+			cp $INPUT_CONFIG.yaml "$NEW_INPUT_CONFIG"
+			cp $PIPELINE_CONFIG.yaml "$NEW_PIPELINE_CONFIG"
 
 			# edit new input config
-			sed -i "s/\(name: \)\(.*\)/\1$NAME/g" $NEW_INPUT_CONFIG
+			sed -i "s/\(name: \)\(.*\)/\1${NAME}/g" "$NEW_INPUT_CONFIG"
 
 			# shaka-streamer upload
-			shaka-streamer -i $NEW_INPUT_CONFIG -p $NEW_PIPELINE_CONFIG  -c s3://my_s3_bucket/folder/
+			#shaka-streamer -i $NEW_INPUT_CONFIG -p $NEW_PIPELINE_CONFIG  -c s3://my_s3_bucket/folder/
+			shaka-streamer -i "$NEW_INPUT_CONFIG" -p "$NEW_PIPELINE_CONFIG" -o /media/NAS/EditHouse\ Encode
 		fi
 
 	done
