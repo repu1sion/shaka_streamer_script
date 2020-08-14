@@ -13,8 +13,9 @@
 
 
 
-VER="0.2"
+VER="0.4"
 
+OUTDIR="/home/madis/Desktop/Encode"
 INPUT_CONFIG="input_vod_config"
 PIPELINE_CONFIG="pipeline_vod_config"
 NAME=""					# store new filename here
@@ -28,7 +29,7 @@ while true; do
 	#while inotifywait -r -e modify,create,delete,move .; do
 
 	# we get the file name in list.txt. overwrite list.txt after
-	while inotifywait -r -e create,delete,move --format '%f'  . > list.txt; do
+	while inotifywait -r -e modify,create,delete,move --format '%f'  . > list.txt; do
 		echo "[new file appeared]"
 		if [ -e list.txt ]; then
                 	while read FNAME; do
@@ -53,7 +54,9 @@ while true; do
 
 			# shaka-streamer upload
 			#shaka-streamer -i $NEW_INPUT_CONFIG -p $NEW_PIPELINE_CONFIG  -c s3://my_s3_bucket/folder/
-			shaka-streamer -i "$NEW_INPUT_CONFIG" -p "$NEW_PIPELINE_CONFIG" -o /media/NAS/EditHouse\ Encode
+			DIRNAME=$(echo "$NAME" | cut -f 1 -d '.')
+			mkdir "$OUTDIR/$DIRNAME"
+			shaka-streamer -i "$NEW_INPUT_CONFIG" -p "$NEW_PIPELINE_CONFIG" -o "$OUTDIR/$DIRNAME"
 		fi
 
 	done
