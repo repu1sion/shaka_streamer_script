@@ -22,7 +22,7 @@ streaming_mode: vod
 # For VOD, you can specify many more resolutions than you would with live,
 # since the encoding does not need to be done in real time.
 resolutions:
-  - 2160p
+  - 4k
   - 1080p
   - 480p
 
