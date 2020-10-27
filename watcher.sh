@@ -13,7 +13,7 @@
 
 
 
-VER="0.5"
+VER="0.6"
 
 OUTDIR="/home/madis/Desktop/Encode"
 INPUT_CONFIG="input_vod_config"
@@ -46,15 +46,18 @@ while true; do
 			echo "ic: $NEW_INPUT_CONFIG"
 			echo "pc: $NEW_PIPELINE_CONFIG"
 
-			cp $INPUT_CONFIG.yaml "$NEW_INPUT_CONFIG"
-			cp $PIPELINE_CONFIG.yaml "$NEW_PIPELINE_CONFIG"
-
+			# create new dir for a file, then copy 2 configs and file into it, then cd into
+			DIRNAME=$(echo "$NAME" | cut -f 1 -d '.')
+			mkdir $DIRNAME
+			cp $INPUT_CONFIG.yaml ${DIRNAME}/${NEW_INPUT_CONFIG}
+			cp $PIPELINE_CONFIG.yaml ${DIRNAME}/${NEW_PIPELINE_CONFIG}
+			mv $NAME $DIRNAME
+			cd $DIRNAME
 			# edit new input config
 			sed -i "s/\(name: \)\(.*\)/\1${NAME}/g" "$NEW_INPUT_CONFIG"
 
 			# shaka-streamer upload
 			#shaka-streamer -i $NEW_INPUT_CONFIG -p $NEW_PIPELINE_CONFIG  -c s3://my_s3_bucket/folder/
-			DIRNAME=$(echo "$NAME" | cut -f 1 -d '.')
 			mkdir "$OUTDIR/$DIRNAME"
 			#shaka-streamer -i "$NEW_INPUT_CONFIG" -p "$NEW_PIPELINE_CONFIG" -o "$OUTDIR/$DIRNAME"
 			shaka-streamer -i "$NEW_INPUT_CONFIG" -p "$NEW_PIPELINE_CONFIG" -c s3://https://edithouse-streaming.s3.eu-west-2.amazonaws.com/edithouse-streaming
@@ -62,7 +65,7 @@ while true; do
 				echo "[removing the original video file]"
 				rm "$NAME"
         		fi
-
+			cd ..
 		fi
 
 	done
